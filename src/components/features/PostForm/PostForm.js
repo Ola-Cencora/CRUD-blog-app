@@ -22,15 +22,17 @@ const PostForm = ({ action, actionText, ...props }) => {
     const [publishedDate, setPublishedDate] = useState(props.publishedDate || '');
     const [shortDescription, setShortDescription] = useState(props.shortDescription || '');
     const [content, setContent] = useState(props.content || '');
+    const [category, setCategory] = useState(props.category || '');
     const [contentError, setContentError] = useState(false);
     const [dateError, setDateError] = useState(false);
-    const [category, setCategory] = useState('');
+    const [categoryError, setCategoryError] = useState(false);
 
     const handleSubmit = () => {
         setContentError(!content)
         setDateError(!publishedDate)
-        if(content && publishedDate) {
-            action({ title, author, publishedDate, shortDescription, content })
+        setCategoryError(!category)
+        if(content && publishedDate && category) {
+            action({ title, author, publishedDate, shortDescription, content, category })
         }
     };
   
@@ -67,14 +69,19 @@ const PostForm = ({ action, actionText, ...props }) => {
             />
             {dateError && <small className="d-block form-text text-danger mt-2">This field is required</small>}
         </Form.Group>
-        <Form.Group>
+        <Form.Group  className="mb-3" controlId="formCategory">
             <Form.Label>Category</Form.Label>
-            <Form.Select onChange={(e) => setCategory(e.target.value)}>
-                <option>Select category...</option>
+            <Form.Select onChange={(e) => setCategory(e.target.value)} value={category}>
+                {category ? (
+                    <option key="selected" value={category}>{category}</option>
+                ) : (
+                    <option disabled selected value="">Select category...</option>
+                )}
                 {categories.map(({ id, title }) => (
                     <option key={id} value={title}>{title}</option>
                 ))}
             </Form.Select>
+            {categoryError && <small className="d-block form-text text-danger mt-2">This field is required</small>}    
         </Form.Group>
         <Form.Group className="mb-3" controlId="formShortDescription">
             <Form.Label>Short description</Form.Label>
